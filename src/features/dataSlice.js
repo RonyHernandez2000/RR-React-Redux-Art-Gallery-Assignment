@@ -1,50 +1,45 @@
-import { createSlice } from '@reduxjs/toolkit'
-
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    objectId: 104025,
-    apiData: {}
-}
+  objectId: 10245,
+  apiData: {},
+};
 
+export const dataSlice = createSlice({
+  name: "data",
+  initialState,
+  reducers: {
+    setData: (state, action) => {
+      return { ...state, apiData: action.payload };
+    },
+    clearData: () => {
+      return initialState;
+    },
+    inputId: (state, action) => {
+      return { ...state, objectId: action.payload };
+    },
+    incrementId: (state) => {
+      return { ...state, objectId: state.objectId + 1 };
+    },
+    decrementId: (state) => {
+      return { ...state, objectId: state.objectId - 1 };
+    },
+  },
+});
 
-    export const dataSlice = createSlice({
-    name: 'data',
-    initialState,
-    reducers: {
-
-       setAPIData: (action) => {
-            return{apiData: action.payload}
-        },
-
-        incrementId: (state) => {
-            return { ...state, objectId: state.objectId + 1  }
-        },
-
-        decrementId: (state) => {
-            return { ...state, objectId: state.objectId - 1 }
-        },
-
-       clearId: (state) => {
-            return initialState
-        },
-
-        resetId: (state,action) => {
-            return { ...state, objectId: action.payload }
-        }
-    }
-    
-})
-
-export const { setAPIData, incrementId, decrementId, clearId, resetId} = dataSlice.actions
+export const { setData, clearData, incrementId, decrementId, inputId } =
+  dataSlice.actions;
 
 export const fetchData = () => {
-    const fetchDataThunk = async () => {
-        let state = getState()
-        let dispatch = dispatch()
-        const response = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${state.data.objectId}`)
-        const rData = await response.json()
-        dispatch(setAPIData(rData))
-    }
-    return fetchDataThunk
-}
-export default dataSlice.reducer
+  const fetchDataThunk = async (dispatch, getState) => {
+    let state = getState();
+    const response = await fetch(
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${state.data.objectId}`
+    );
+    const rData = await response.json();
+    dispatch(setData(rData));
+  };
+  return fetchDataThunk;
+};
+
+export default dataSlice.reducer;
